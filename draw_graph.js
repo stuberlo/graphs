@@ -29,21 +29,60 @@ if (data['xTics']) {
 if (data['yTics']) {
 	yTics = data['yTics']
 }
-const drawAxes = data['draw_axes']
-const drawGrid = data['draw_grid']
-const dataset = data['dataset']
-const color = data['color']
-graph.datasets.push([dataset, color])
+let drawAxes = data['draw_axes']
+let drawGrid = data['draw_grid']
+let dataset = data['dataset']
+let color = data['color']
+let chartType = data['chartType']
+graph.datasets.push([dataset, color, chartType])
 graph.updateGraph(
-   x_min, 
-   x_max, 
-   y_min, 
-   y_max, 
+   x_min,
+   x_max,
+   y_min,
+   y_max,
    {
    	drawAxes: drawAxes,
    	drawGrid: drawGrid,
-   	drawXtics: xTics, 
-   	drawYtics: yTics, 
+   	drawXtics: xTics,
+   	drawYtics: yTics,
+   	width: width,
+   	height: height,
+   }
+);
+
+if (barData['limits']) {
+x_min = barData['limits']['x_min']
+x_max = barData['limits']['x_max']
+y_min = barData['limits']['y_min']
+y_max = barData['limits']['y_max']
+}
+
+if (barData['size']) {
+  width = barData['size']['width']
+  height = barData['size']['height']
+}
+if (barData['xTics']) {
+	xTics = barData['xTics']
+}
+if (barData['yTics']) {
+	yTics = barData['yTics']
+}
+drawAxes = barData['draw_axes']
+drawGrid = barData['draw_grid']
+dataset = barData['dataset']
+color = barData['color']
+chartType = barData['chartType']
+graph.datasets.push([dataset, color, chartType])
+graph.updateGraph(
+   x_min,
+   x_max,
+   y_min,
+   y_max,
+   {
+   	drawAxes: drawAxes,
+   	drawGrid: drawGrid,
+   	drawXtics: xTics,
+   	drawYtics: yTics,
    	width: width,
    	height: height,
    }
