@@ -24,24 +24,29 @@ export class Graph {
         this.scaleX = this.canvas.width / (this.maxX - this.minX);
         this.scaleY = this.canvas.height / (this.maxY - this.minY);
 
-	if (extras['drawGrid']) {
-        	this.drawGridlines();
-	}
-	if (extras['drawAxes']) {
-        	this.drawAxes();
-	}
-	if (extras['drawXtics']) {
-        	this.drawTics(extras['drawXtics'], 'x');
-	}
-	if (extras['drawYtics']) {
-        	this.drawTics(extras['drawYtics'], 'y');
-	}
-	
-	for (const [data, color] of this.datasets) {
-        	this.drawData(data, color);
-	}
+        if (extras['drawGrid']) {
+                this.drawGridlines();
+        }
 
-	this.displayGraphValues();
+        if (extras['drawAxes']) {
+                this.drawAxes();
+        }
+        if (extras['drawXtics']) {
+                this.drawTics(extras['drawXtics'], 'x');
+        }
+        if (extras['drawYtics']) {
+                this.drawTics(extras['drawYtics'], 'y');
+        }
+        if (extras['chartType']) {
+                this.drawTics(extras['drawYtics'], 'y');
+        }
+
+        for (const [data, color, chartType] of this.datasets) {
+                this.drawData(data, color, chartType);
+        }
+
+
+        this.displayGraphValues();
     }
 
     displayGraphValues() {
@@ -145,37 +150,48 @@ export class Graph {
 	const y = (1 - (graphY - this.minY) / (this.maxY - this.minY)) * this.canvas.height
 	return [x, y]
     }
-    
-    drawData(data, color) {
+
+    drawData(data, color, chartType) {
         const ctx = this.ctx;
         const canvas = this.canvas;
     
         ctx.beginPath();
         ctx.strokeStyle = color;
         ctx.lineWidth = 2;
-    
-	let line_in_window = false;
-	let xPosPrev;
-	let yPosPrev;
 
-	for (const [x, y] of data) {
-	    const [xPos, yPos] = this.coordinates2pixels(x, y) 
-	    if (y >= this.minY && y <= this.maxY) {
-		if (line_in_window) {
-       	    	    ctx.lineTo(xPos, yPos);
-		} else {
-       	    	    ctx.moveTo(xPosPrev, yPosPrev);
-       	    	    ctx.lineTo(xPos, yPos);
-       	    	    ctx.moveTo(xPos, yPos);
-		    line_in_window = true
-		}
-	    } else if (line_in_window) {
-       	        ctx.lineTo(xPos, yPos);
-		line_in_window = false
-	    } 
-	    xPosPrev = xPos;
-	    yPosPrev = yPos;
-	}
+        let line_in_window = false;
+        let xPosPrev;
+        let yPosPrev;
+
+        if (chartType === 'line') {
+          for (const [x, y] of data) {
+              const [xPos, yPos] = this.coordinates2pixels(x, y)
+              if (y >= this.minY && y <= this.maxY) {
+                if (line_in_window) {
+                    ctx.lineTo(xPos, yPos);
+                } else {
+                    ctx.moveTo(xPosPrev, yPosPrev);
+                    ctx.lineTo(xPos, yPos);
+                    ctx.moveTo(xPos, yPos);
+                    line_in_window = true
+                }
+              } else if (line_in_window) {
+                  ctx.lineTo(xPos, yPos);
+                line_in_window = false
+              }
+              xPosPrev = xPos;
+              yPosPrev = yPos;
+          }
+        } else if (chartType === 'bar') {
+          ctx.fillStyle = color;
+          const barWidth = 25
+          let barHeight = 0
+          for (const [x, y] of data) {
+              const [xPos, yPos] = this.coordinates2pixels(x, y)
+              barHeight = this.canvas.height - Math.abs(yPos)
+              ctx.fillRect(xPos - barWidth/2, yPos, barWidth, barHeight);
+          }
+        }
 
         ctx.stroke();
         ctx.closePath();
