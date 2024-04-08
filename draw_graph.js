@@ -34,7 +34,7 @@ let drawGrid = data['draw_grid']
 let dataset = data['dataset']
 let color = data['color']
 let chartType = data['chartType']
-graph.datasets.push([dataset, color, chartType])
+graph.datasets.push({'data': dataset, 'color': color, 'chartType': chartType})
 graph.updateGraph(
    x_min,
    x_max,
@@ -72,7 +72,7 @@ drawGrid = barData['draw_grid']
 dataset = barData['dataset']
 color = barData['color']
 chartType = barData['chartType']
-graph.datasets.push([dataset, color, chartType])
+graph.datasets.push({'data': dataset, 'color': color, 'chartType': chartType})
 graph.updateGraph(
    x_min,
    x_max,

@@ -41,10 +41,9 @@ export class Graph {
                 this.drawTics(extras['drawYtics'], 'y');
         }
 
-        for (const [data, color, chartType] of this.datasets) {
-                this.drawData(data, color, chartType);
+        for (const ds of this.datasets) {
+                this.drawData(ds['data'], ds['color'], ds['chartType']);
         }
-
 
         this.displayGraphValues();
     }
