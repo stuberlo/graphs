@@ -47,10 +47,46 @@ export class Graph {
         }
 
         for (const ds of this.datasets) {
-                this.drawData(ds['data'], ds['color'], ds['chartType']);
+                ds['objects'] = this.drawData(ds['data'], ds['color'], ds['chartType']);
         }
 
         this.displayGraphValues();
+
+        // some click and hover logic
+        const datasets = this.datasets
+        const ctx = this.ctx
+
+        function fireIfPointInPath(e, datasets, eventType) {
+                let rect = e.target.getBoundingClientRect(),
+                    x = e.clientX - rect.left,
+                    y = e.clientY - rect.top,
+                    i = -1, b,
+                    eventColor = eventType + 'Color',
+                    eventAction = eventType + 'Action';
+                for (const ds of datasets) {
+                  while(b = ds.objects[i++]) {
+                    ctx.beginPath();
+                    ctx.rect(b.x, b.y, b.w, b.h);
+                    if (ctx.isPointInPath(x, y)) {
+                      ctx.fillStyle = ds[eventColor]
+                      if (ds[eventAction]) {
+                        ds[eventAction](ds, i)
+                      }
+                    } else {
+                      ctx.fillStyle = ds['color']
+                    }
+                    ctx.fill();
+                  }
+                }
+        }
+
+        this.canvas.onclick = function(e) {
+                fireIfPointInPath(e, datasets, 'click')
+        }
+
+        this.canvas.onmousemove = function(e) {
+                fireIfPointInPath(e, datasets, 'hover')
+        }
     }
 
     displayGraphValues() {
@@ -163,9 +199,7 @@ export class Graph {
         ctx.strokeStyle = color;
         ctx.lineWidth = 2;
 
-        let line_in_window = false;
-        let xPosPrev;
-        let yPosPrev;
+        let line_in_window = false, xPosPrev, yPosPrev, objects = []
 
         if (chartType === 'line') {
           for (const [x, y] of data) {
@@ -188,17 +222,20 @@ export class Graph {
           }
         } else if (chartType === 'bar') {
           ctx.fillStyle = color;
-          const barWidth = 25
-          let barHeight = 0
+          let bX, bY, bW = 25, bH
           for (const [x, y] of data) {
               const [xPos, yPos] = this.coordinates2pixels(x, y)
-              barHeight = this.canvas.height - Math.abs(yPos)
-              ctx.fillRect(xPos - barWidth/2, yPos, barWidth, barHeight);
+              bX = xPos - bW/2
+              bY = yPos
+              bH = this.canvas.height - Math.abs(yPos)
+              ctx.fillRect(bX, bY, bW, bH);
+              objects.push({'x': bX, 'y': bY, 'w': bW, 'h': bH})
           }
         }
 
         ctx.stroke();
         ctx.closePath();
+        return objects
     }
 
 }

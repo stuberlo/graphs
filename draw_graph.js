@@ -72,7 +72,7 @@ drawGrid = barData['draw_grid']
 dataset = barData['dataset']
 color = barData['color']
 chartType = barData['chartType']
-graph.datasets.push({'data': dataset, 'color': color, 'chartType': chartType})
+graph.datasets.push({'data': dataset, 'color': color, 'chartType': chartType, 'hoverColor': 'lightgreen', 'clickColor': 'blue', 'clickAction': function(ds, i) {console.log('hovered on data point', ds['data'][i-1])}})
 graph.updateGraph(
    x_min,
    x_max,
