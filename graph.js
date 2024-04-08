@@ -1,3 +1,8 @@
+const GRID_LINES_COLOR = "#000000",
+TIC_LABEL_COLOR = "#00DDDD",
+TIC_LINE_COLOR = "#DDDDDD",
+AXES_COLOR = "#000000";
+
 export class Graph {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
@@ -67,7 +72,7 @@ export class Graph {
         const canvas = this.canvas;
 
         ctx.beginPath();
-        ctx.strokeStyle = "#000000";
+        ctx.strokeStyle = AXES_COLOR
         ctx.lineWidth = 2;
 
         if (this.maxY >= 0 && this.minY <= 0) {
@@ -91,7 +96,7 @@ export class Graph {
         const canvas = this.canvas;
 
         ctx.beginPath();
-        ctx.strokeStyle = "#000000";
+        ctx.strokeStyle = TIC_LINE_COLOR
         ctx.lineWidth = 2;
 
         const ticLength = 20
@@ -110,7 +115,7 @@ export class Graph {
                 ctx.translate(x, y);
                 ctx.rotate(axis === 'x' ? -Math.PI/2: 0);
                 ctx.font = "10px Arial";
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = TIC_LABEL_COLOR
                 ctx.fillText(
                         label,
                         axis === 'x' ? 10 : axis === 'y' ? ticLength + 5 : 0,
@@ -127,7 +132,7 @@ export class Graph {
         const canvas = this.canvas;
 
         ctx.beginPath();
-        ctx.strokeStyle = "#DDDDDD";
+        ctx.strokeStyle = GRID_LINES_COLOR;
         ctx.lineWidth = 1;
 
         for (const xpos of gridLinesData(this.minX, this.maxX, this.scaleX)) {
